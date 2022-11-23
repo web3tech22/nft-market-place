@@ -1,21 +1,18 @@
 import React, { useState } from "react";
-import { Formik, Form, Field } from "formik";
-import * as Yup from "yup";
 import { Grid, Card } from "@mui/material";
 import { _transction } from "../../CONTRACT-ABI/connect";
 import TransctionModal from "../shared/TransctionModal";
 import { getSymbol } from "../../utils/currencySymbol";
 import { convertEthToWei, convertEthFromWei } from "../../utils/web3Util";
-
-const VendorSchema = Yup.object().shape({
-  amount: Yup.string().required("Amount is required"),
-});
+import TextField from '@mui/material/TextField';
 
 const UpdatePrice = ({ price, tokenId, fetchNftInfo }) => {
   const [start, setStart] = useState(false);
   const [response, setResponse] = useState(null);
+  const [amount, setAmount] = useState(convertEthFromWei(price));
 
-  const saveData = async ({ amount }) => {
+
+  const saveData = async () => {
     setStart(true);
     let responseData;
 
@@ -47,43 +44,31 @@ const UpdatePrice = ({ price, tokenId, fetchNftInfo }) => {
       >
         <Card style={{ padding: 15 }}>
           <p>Update Price</p>
-          <Formik
-            initialValues={{
-              amount: convertEthFromWei(price),
-            }}
-            validationSchema={VendorSchema}
-            onSubmit={(values, { setSubmitting }) => {
-              saveData(values);
-              setSubmitting(false);
-            }}
-          >
-            {({ touched, errors, isSubmitting, values }) => (
-              <Form>
-                <div className="form-group">
-                  <Field
-                    type="text"
-                    name="amount"
-                    autoComplete="flase"
-                    placeholder={`Enter amount (${getSymbol()})`}
-                    className={`form-control text-muted ${
-                      touched.amount && errors.amount ? "is-invalid" : ""
-                    }`}
-                    style={{ marginRight: 10, padding: 6 }}
-                  />
-                </div>
+          <div className="form-group">
+            <Grid item lg={6} md={6} sm={12} xs={12} >
+              <TextField
+                type="text"
+                name="amount"
+                style={{ marginRight: 10, padding: 6 }}
+                value={amount}
+                placeholder={`Enter amount (${getSymbol()})`}
+                size="small"
+                variant="outlined"
+                onChange={(e) => setAmount(e.target.value)}
+              />
+            </Grid>
+          </div>
 
-                <div className="form-group" style={{ marginTop: 20 }}>
-                  <span className="input-group-btn">
-                    <input
-                      className="btn btn-default btn-primary"
-                      type="submit"
-                      value={"Update"}
-                    />
-                  </span>
-                </div>
-              </Form>
-            )}
-          </Formik>
+          <div className="form-group" style={{ marginTop: 20 }}>
+            <span className="input-group-btn">
+              <input
+                className="btn btn-default btn-primary"
+                onClick={() => {
+                  saveData();
+                }}
+              />
+            </span>
+          </div>
         </Card>
       </div>
     </>

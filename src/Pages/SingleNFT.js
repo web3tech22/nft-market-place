@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Formik, Form, Field, FieldArray } from "formik";
-import * as Yup from "yup";
 import { Card, Grid } from "@mui/material";
 import { _transction } from "../../src/CONTRACT-ABI/connect";
 import Button from "@mui/material/Button";
@@ -26,13 +24,6 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-
-const VendorSchema = Yup.object().shape({
-  title: Yup.string().required("Title is required"),
-  authorname: Yup.string().required("Authorname is required"),
-  price: Yup.string().required("Price is required"),
-  royelty: Yup.number().max(15),
-});
 
 const Mint = () => {
   const configs = React.useContext(ConfigContext);

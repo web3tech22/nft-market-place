@@ -1,9 +1,7 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
-import { Formik, Form, Field } from "formik";
-import * as Yup from "yup";
 import { Grid } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import PhoneInTalkIcon from "@mui/icons-material/PhoneInTalk";
@@ -11,15 +9,8 @@ import swal from "sweetalert";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
 import { _account } from "../../CONTRACT-ABI/connect";
-
+import TextField from '@mui/material/TextField';
 import { ConfigContext } from "../../App";
-
-const VendorSchema = Yup.object().shape({
-  firstname: Yup.string().required("Firstname is required"),
-  lastname: Yup.string().required("Lastname is required"),
-  contactNo: Yup.string().required("Contact no is required"),
-  emailAddress1: Yup.string().required("Email is required").email(),
-});
 
 const style = {
   position: "absolute",
@@ -92,11 +83,21 @@ export default function BasicModal() {
   const handleClose = () => setOpen(false);
   const configs = React.useContext(ConfigContext);
 
-  const saveData = async (data) => {
+
+  const [firstname, setfirstname] = useState('');
+  const [lastname, setlastname] = useState('');
+  const [contactNo, setcontactNo] = useState('');
+  const [emailAddress1, setemailAddress1] = useState('');
+
+
+  const saveData = async () => {
     setLoading(true);
     const account = await _account();
     const requestData = {
-      ...data,
+      firstname: firstname,
+      lastname: lastname,
+      contactNo: contactNo,
+      emailAddress1: emailAddress1,
       wallet_address: account,
       subject: "Contact us",
       website: window.location.href,
@@ -132,156 +133,138 @@ export default function BasicModal() {
       >
         <Box sx={style}>
           <h2>Contact Us</h2>
-          <Formik
-            initialValues={{
-              firstname: "",
-              lastname: "",
-              contactNo: "",
-              emailAddress1: "",
-            }}
-            validationSchema={VendorSchema}
-            onSubmit={(values, { setSubmitting }) => {
-              saveData(values);
-              setSubmitting(false);
-            }}
-          >
-            {({ touched, errors, isSubmitting, values }) => (
-              <Form>
-                <Grid container>
-                  <Grid item lg={12} md={12} sm={12} xs={12}>
-                    <div
-                      className="form-group"
-                      style={{ marginLeft: 10, marginTop: 10 }}
-                    >
-                      <label for="title" className="my-2">
-                        First name <span className="text-danger">*</span>
-                      </label>
-                      <Field
-                        type="text"
-                        name="firstname"
-                        autoComplete="flase"
-                        placeholder="Enter firstname"
-                        className={`form-control text-muted ${
-                          touched.firstname && errors.firstname
-                            ? "is-invalid"
-                            : ""
-                        }`}
-                        style={{ marginRight: 10, padding: 9 }}
-                      />
-                    </div>
-                  </Grid>
-                  <Grid item lg={12} md={12} sm={12} xs={12}>
-                    <div
-                      className="form-group"
-                      style={{ marginLeft: 10, marginTop: 10 }}
-                    >
-                      <label for="title" className="my-2">
-                        Last name <span className="text-danger">*</span>
-                      </label>
-                      <Field
-                        type="text"
-                        name="lastname"
-                        autoComplete="flase"
-                        placeholder="Enter lastname"
-                        className={`form-control text-muted ${
-                          touched.lastname && errors.lastname
-                            ? "is-invalid"
-                            : ""
-                        }`}
-                        style={{ marginRight: 10, padding: 9 }}
-                      />
-                    </div>
-                  </Grid>
-                  <Grid item lg={12} md={12} sm={12} xs={12}>
-                    <div
-                      className="form-group"
-                      style={{ marginLeft: 10, marginTop: 10 }}
-                    >
-                      <label for="title" className="my-2">
-                        Contact No <span className="text-danger">*</span>
-                      </label>
-                      <Field
-                        type="number"
-                        name="contactNo"
-                        autoComplete="flase"
-                        placeholder="Enter contactNo"
-                        className={`form-control text-muted ${
-                          touched.contactNo && errors.contactNo
-                            ? "is-invalid"
-                            : ""
-                        }`}
-                        style={{ marginRight: 10, padding: 9 }}
-                      />
-                    </div>
-                  </Grid>
-                  <Grid item lg={12} md={12} sm={12} xs={12}>
-                    <div
-                      className="form-group"
-                      style={{ marginLeft: 10, marginTop: 10 }}
-                    >
-                      <label for="title" className="my-2">
-                        Email <span className="text-danger">*</span>
-                      </label>
-                      <Field
-                        type="text"
-                        name="emailAddress1"
-                        autoComplete="flase"
-                        placeholder="Enter email"
-                        className={`form-control text-muted ${
-                          touched.emailAddress1 && errors.emailAddress1
-                            ? "is-invalid"
-                            : ""
-                        }`}
-                        style={{ marginRight: 10, padding: 9 }}
-                      />
-                    </div>
-                  </Grid>
+          <Grid container>
+            <Grid item lg={12} md={12} sm={12} xs={12}>
+              <div
+                className="form-group"
+                style={{ marginLeft: 10, marginTop: 10 }}
+              >
+                <label for="title" className="my-2">
+                  First name <span className="text-danger">*</span>
+                </label>
+                <TextField
+                  style={{ marginRight: 10, padding: 9 }}
+                  type="text"
+                  name="firstname"
+                  placeholder="Enter firstname"
+                  size="small"
+                  variant="outlined"
+                  onChange={(e) => {
+                    setfirstname(e.target.value)
+                  }
+                  }
+                />
+              </div>
+            </Grid>
+            <Grid item lg={12} md={12} sm={12} xs={12}>
+              <div
+                className="form-group"
+                style={{ marginLeft: 10, marginTop: 10 }}
+              >
+                <label for="title" className="my-2">
+                  Last name <span className="text-danger">*</span>
+                </label>
+                <TextField
+                  style={{ marginRight: 10, padding: 9 }}
+                  type="text"
+                  name="lastname"
+                  placeholder="Enter lastname"
+                  size="small"
+                  variant="outlined"
+                  onChange={(e) => {
+                    setlastname(e.target.value)
+                  }
+                  }
+                />
+              </div>
+            </Grid>
+            <Grid item lg={12} md={12} sm={12} xs={12}>
+              <div
+                className="form-group"
+                style={{ marginLeft: 10, marginTop: 10 }}
+              >
+                <label for="title" className="my-2">
+                  Contact No <span className="text-danger">*</span>
+                </label>
+                <TextField
+                  style={{ marginRight: 10, padding: 9 }}
+                  type="number"
+                  name="contactNo"
+                  placeholder="Enter contactNo"
+                  size="small"
+                  variant="outlined"
+                  onChange={(e) => {
+                    setcontactNo(e.target.value)
+                  }
+                  }
+                />
+              </div>
+            </Grid>
+            <Grid item lg={12} md={12} sm={12} xs={12}>
+              <div
+                className="form-group"
+                style={{ marginLeft: 10, marginTop: 10 }}
+              >
+                <label for="title" className="my-2">
+                  Email <span className="text-danger">*</span>
+                </label>
+                <TextField
+                  style={{ marginRight: 10, padding: 9 }}
+                  type="text"
+                  name="emailAddress1"
+                  placeholder="Enter email"
+                  size="small"
+                  variant="outlined"
+                  onChange={(e) => {
+                    setcontactNo(e.target.value)
+                  }
+                  }
+                />
+              </div>
+            </Grid>
 
-                  <Grid item lg={12} md={12} sm={12} xs={12}>
-                    <div
-                      className="form-group"
+            <Grid item lg={12} md={12} sm={12} xs={12}>
+              <div
+                className="form-group"
+                style={{
+                  marginTop: 10,
+                  float: "right",
+                }}
+              >
+                <span className="input-group-btn">
+                  {loading ? (
+                    <LoadingButton
+                      loading
+                      loadingPosition="start"
+                      variant="outlined"
+                      startIcon={<SaveIcon />}
+                    >
+                      Please wait ...
+                    </LoadingButton>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      size="large"
+                      sx={{
+                        marginX: "15px",
+                        marginBottom: "15px",
+                      }}
+                      type="submit"
+                      value={"Submit"}
                       style={{
+                        fontSize: 16,
+                        padding: "10px 24px",
+                        borderRadius: 12,
                         marginTop: 10,
-                        float: "right",
                       }}
                     >
-                      <span className="input-group-btn">
-                        {loading ? (
-                          <LoadingButton
-                            loading
-                            loadingPosition="start"
-                            variant="outlined"
-                            startIcon={<SaveIcon />}
-                          >
-                            Please wait ...
-                          </LoadingButton>
-                        ) : (
-                          <Button
-                            variant="contained"
-                            size="large"
-                            sx={{
-                              marginX: "15px",
-                              marginBottom: "15px",
-                            }}
-                            type="submit"
-                            value={"Submit"}
-                            style={{
-                              fontSize: 16,
-                              padding: "10px 24px",
-                              borderRadius: 12,
-                              marginTop: 10,
-                            }}
-                          >
-                            Submit
-                          </Button>
-                        )}
-                      </span>
-                    </div>
-                  </Grid>
-                </Grid>
-              </Form>
-            )}
-          </Formik>
+                      Submit
+                    </Button>
+                  )}
+                </span>
+              </div>
+            </Grid>
+          </Grid>
         </Box>
       </Modal>
     </div>
